@@ -87221,7 +87221,7 @@ if(n!=null)B.b.P(o,A.c([m.a6R(n),B.bL],s))
 if(p!=null)B.b.P(o,A.c([m.ag4(p),B.bL],s))
 if(q!=null)B.b.P(o,A.c([m.acD(q),B.bL],s))
 o.push(B.lG)
-o.push(A.j_(A.c([new A.rL(A.aAA(l,l,new A.wx("assets/tas9_logo_01.png",l,l)),l,40,B.bh,B.dL,B.ml,l,!1,l),B.iu,A.bu("lume  v1.3.1  \u30fb  \xa9 2026 +9",l,l,l,B.zJ,l,l)],s),B.cv,B.aZ,B.bT))
+o.push(A.j_(A.c([new A.rL(A.aAA(l,l,new A.wx("assets/tas9_logo_01.png",l,l)),l,40,B.bh,B.dL,B.ml,l,!1,l),B.iu,A.bu("lume  v1.4.0  \u30fb  \xa9 2026 +9",l,l,l,B.zJ,l,l)],s),B.cv,B.aZ,B.bT))
 o.push(B.bL)
 return new A.zO(A.azI(o,B.hj),m.gafP(),l)},
 pA(a,b){var s=A.c([this.Ss(b),B.lF],t.p)
