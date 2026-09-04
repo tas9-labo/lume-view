@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>領収書</title>
+<!--
+  lume の領収書（お客様のスマホ用・2026-09-04）。
+  内容は URL の「#」以降に丸ごと入っている（サーバーには送られず・保存もされない）。
+  このページは中身を読んで表示するだけ。iPad 表示ページの QR から開く。
+-->
+<style>
+:root{--bg:#FAF7F0;--paper:#FFFFFF;--ink:#3B3A36;--dim:#7B7A70;--deep:#4E6E53;--line:#D9D4C7;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;padding:16px}
+.paper{background:var(--paper);max-width:380px;margin:0 auto;padding:22px 20px 26px;border:1px solid var(--line);border-radius:12px;font-size:14px;line-height:1.6}
+h1{text-align:center;font-size:20px;letter-spacing:6px;margin:0 0 14px;font-weight:600}
+.to{display:flex;justify-content:center;align-items:flex-end;gap:6px;margin-bottom:14px}
+.to .line{display:inline-block;width:150px;border-bottom:1px solid var(--ink);height:18px}
+.amt{text-align:center;margin:6px 0 2px}
+.amt b{font-size:28px}
+.amt small{font-size:12px;margin-left:4px}
+.c{text-align:center;margin:0;font-size:12px}
+hr{border:0;border-top:1px dotted #9A9789;margin:10px 0}
+table{width:100%;border-collapse:collapse}
+td{padding:2px 0;vertical-align:top}
+td.v{text-align:right;white-space:nowrap;padding-left:10px}
+tr.b td{font-weight:700;font-size:15px}
+tr.d td{color:var(--dim);font-size:12px}
+.shop .name{font-weight:700;font-size:15px}
+.shop div{font-size:12px}
+.st{color:var(--dim);font-size:12px;margin-top:6px}
+.re{color:var(--dim);font-size:12px;text-align:right;margin-top:6px}
+.btns{max-width:380px;margin:16px auto 0;display:flex;justify-content:center}
+.btn{appearance:none;border:0;background:var(--deep);color:#fff;border-radius:999px;padding:12px 26px;font-size:16px;font-weight:700}
+.err{max-width:380px;margin:40px auto;text-align:center;color:var(--dim)}
+@media print{body{background:#fff;padding:0}.paper{border:0;max-width:none}.btns{display:none}}
+</style>
+</head>
+<body>
+<div id="err" class="err" hidden>領収書のデータを読み取れませんでした</div>
+<article id="r" class="paper" hidden>
+  <h1>領 収 書</h1>
+  <div class="to"><span class="line"></span><span>様</span></div>
+  <div class="amt"><b id="amt"></b><small>（税込）</small></div>
+  <p class="c" id="tad"></p>
+  <p class="c">上記正に領収いたしました</p>
+  <hr><table id="meta"></table>
+  <hr><table id="ln"></table>
+  <hr><table id="tot"></table>
+  <hr>
+  <div id="shop" class="shop"></div>
+  <div id="st" class="st" hidden></div>
+  <div id="re" class="re" hidden>※再発行</div>
+</article>
+<div id="btns" class="btns" hidden><button class="btn" type="button" onclick="window.print()">保存・印刷</button></div>
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  function decode(s){
+    s = s.replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    var bin = atob(s), bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+  }
+  function row(t, k, v, cls){
+    var tr = document.createElement('tr'); if (cls) tr.className = cls;
+    var a = document.createElement('td'); a.textContent = k;
+    var b = document.createElement('td'); b.textContent = v; b.className = 'v';
+    tr.appendChild(a); tr.appendChild(b); t.appendChild(tr);
+  }
+  function render(d){
+    $('amt').textContent = d.amt || '';
+    $('tad').textContent = d.tad || '';
+    row($('meta'), '日付', d.d || '');
+    row($('meta'), '領収書 No.', d.no || '');
+    (d.pay || []).forEach(function(p){ row($('meta'), p[0], p[1]); });
+    (d.ln || []).forEach(function(l){ row($('ln'), l[0], l[1]); });
+    (d.tot || []).forEach(function(t){ row($('tot'), t[0], t[1], t[2] === 'b' ? 'b' : (t[2] === 'd' ? 'd' : '')); });
+    (d.shop || []).forEach(function(s, i){ var e = document.createElement('div'); e.textContent = s; if (i === 0) e.className = 'name'; $('shop').appendChild(e); });
+    if (d.st) { $('st').textContent = d.st; $('st').hidden = false; }
+    if (d.re) $('re').hidden = false;
+    $('r').hidden = false; $('btns').hidden = false;
+  }
+  try {
+    var d = decode(location.hash.slice(1));
+    if (!d || d.v !== 1) throw new Error('version');
+    render(d);
+  } catch (e) {
+    $('err').hidden = false;
+  }
+})();
+</script>
+</body>
+</html>
